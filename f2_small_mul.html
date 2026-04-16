@@ -42,23 +42,35 @@
     <div id="my_dataviz"></div> 
 
     <script>
-        // Aiming for grade A
         // Set up the SVG container
         var margin = {top: 30, right: 0, bottom: 30, left: 50},
         width = 210 - margin.left - margin.right,
         height = 210 - margin.top - margin.bottom;
 
-        // Source daytaset: https://observablehq.com/@nikomccarty/multiline-chart-d3
-        d3.csv("stock_data_d3.csv").then(function(rawData) {
+        const stages = ["Land use change","Animal Feed","Farm","Processing","Transport","Packging","Retail"];
 
-            const dateParser = d3.timeParse("%m/%d/%Y"); // Source: https://observablehq.com/@nikomccarty/multiline-chart-d3
+        // Color scale
+        const colors = ["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854","#ffd92f","#e5c494"];
+
+        const colorScale = d3.scaleOrdinal()
+            .domain(stages)
+            .range(colors);
+
+        // Source daytaset: https://observablehq.com/@nikomccarty/multiline-chart-d3
+        d3.csv("Food_Production.csv").then(function(rawData) {
 
             // Convert string values to numbers
-            const allData = rawData.map(({ date, variable, value }) => ({
-                date: dateParser(date),
-                name: variable,
-                value: +value
-            })); // Source: https://observablehq.com/@nikomccarty/multiline-chart-d3
+            const allData = [];
+            const top15 = rawData.sort((a,b) => +b["Total_emissions"] - +a["Total_emissions"]).slice(0,15);
+            top15.forEach(function(d) {
+                stages.forEach(function(s) {
+                    allData.push({
+                        name: d["Food product"],
+                        stage: s,
+                        value: +d[s]
+                    });
+                });
+            });
 
             // group the data: I want to draw one line per group, Source: https://d3-graph-gallery.com/graph/line_smallmultiple.html 
             // var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
@@ -70,27 +82,15 @@
             allKeys = sumstat.map(function(d){return d.key})
 
             // Define X and Y scales
-            const scaleX = d3.scaleTime()
-               .domain(d3.extent(allData, d => d.date)
-                ) // Source: https://d3-graph-gallery.com/graph/line_smallmultiple.html
-               .range([0, width]);
+            const scaleX = d3.scaleBand()
+               .domain(["Land use change","Animal Feed","Farm","Processing","Transport","Packging","Retail"]) // Source: https://d3-graph-gallery.com/graph/line_smallmultiple.html
+               .range([0, width])
+               .padding(0.1);
 
             const scaleY = d3.scaleLinear()
-                .domain([d3.min(allData, d => d.value), d3.max(allData, d => d.value)])
+                .domain([0, d3.max(allData, d => d.value)])
                 .nice()
                 .range([height, 0]);
-
-            // Color scale
-            const colors = ["#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854"];
-
-            const colorScale = d3.scaleOrdinal()
-                .domain(['AMZN', 'GOOG', 'FB', 'BABA', 'JD'])
-                .range(colors); // From ColorBrewer
-
-            //Define line generator, source: https://learning.oreilly.com/library/view/interactive-data-visualization/9781491921296/ch11.html#idm140093188423200
-            const line = d3.line()
-                .x(d => scaleX(d.date)) 
-                .y(d => scaleY(d.value)); // Source: https://observablehq.com/@nikomccarty/multiline-chart-d3
 
             // Add an svg element for each group, source: https://d3-graph-gallery.com/graph/line_smallmultiple.html
             var svg = d3.select("#my_dataviz")
@@ -103,28 +103,29 @@
             .append("g")
             .attr("transform",
                     "translate(" + margin.left + "," + margin.top + ")"); 
-            // Draw the line
-            svg
-                .append("path")
-                .attr("fill", "none")
-                .attr("stroke", function(d){ return colorScale(d.key) })
-                .attr("stroke-width", 1.9)
-                .attr("d", function(d){
-                    return d3.line()
-                      .x(function(d) { return scaleX(d.date); })
-                      .y(function(d) { return scaleY(d.value); })
-                      (d.values)
-                  })
+
+            // Draw bars
+            svg.each(function(foodRow) {
+                d3.select(this).selectAll("rect")
+                    .data(foodRow.values)
+                    .enter()
+                    .append("rect")
+                    .attr("x",      d => scaleX(d.stage))
+                    .attr("y",      d => scaleY(d.value))
+                    .attr("width",  scaleX.bandwidth())
+                    .attr("height", d => height - scaleY(d.value))
+                    .attr("fill",   d => colorScale(d.stage));
+            });
 
             // Add X and Y axes
             svg.append("g")
                 .attr("class", "axis axis-x")
                 .attr("transform", `translate(0, ${height})`)
-                .call(d3.axisBottom(scaleX));
+                .call(d3.axisBottom(scaleX).tickFormat(() => ""));
 
             svg.append("g")
                 .attr("class", "axis axis-y")
-                .call(d3.axisLeft(scaleY).ticks(5).tickFormat(d3.format("$,.0f"))); // Source: https://d3js.org/d3-format
+                .call(d3.axisLeft(scaleY).ticks(5));
 
             // Add title, https://d3-graph-gallery.com/graph/line_smallmultiple.html
             svg.append("text")
@@ -132,7 +133,7 @@
                 .attr("y", -5)
                 .attr("x", 0)
                 .text(function(d){ return(d.key)})
-                .style("fill", function(d){ return colorScale(d.key) })
+                .style("fill", function(d){ return "#2c4a3e" })
 
             // X-axis label
             //Source: https://stackoverflow.com/questions/11189284/d3-axis-labeling
@@ -141,7 +142,7 @@
                 .attr("x", width / 2)
                 .attr("y", height + margin.bottom - 2)
                 .attr("font-size", "8px")
-                .text("Year");
+                .text("Stage");
 
             // Y-axis label
             svg.append("text")
@@ -151,12 +152,12 @@
                 .attr("dy", ".75em")
                 .attr("font-size", "8px")
                 .attr("transform", "rotate(-90)")
-                .text("Stock Price (USD)");
+                .text("kg CO2eq / kg");
 
             // Add legend, source: https://d3-legend.susielu.com/
             const legendSvg = d3.select("#my_dataviz")
                    .append("svg")
-                   .attr("width", 120)            
+                   .attr("width", 160)            
                    .attr("height", 180);
 
             legendSvg.append("g")
@@ -167,7 +168,7 @@
                     .shapeWidth(30)
                     .orient("vertical")
                     .scale(colorScale) 
-                    .title("Stock");
+                    .title("Stage");
 
                 legendSvg.select(".legendOrdinal")
                   .call(legendOrdinal);
