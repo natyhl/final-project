@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 — GHG Emissions per Food</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <style>
+        /* CSS styles for the chart */
+        body { font-family: 'Source Sans 3', sans-serif; background: #fff; color: #2c4a3e; }
+        .bar { opacity: 0.85; }
+        .bar:hover { opacity: 1; stroke: #333; stroke-width: 1px; }
+        .axis-x path,
+        .axis-y path {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .axis-x .tick line,
+        .axis-y .tick line { stroke: #ccc; }
+        .axis text { font-size: 12px; }
+        .title { font-size: 18px; font-weight: bold; }
+        .bar-label { font-size: 10px; }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        .legend-item text { font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div id="chart-container"></div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // F1 — Sorted Horizontal Bar Chart: GHG per kg of food
+        // Starter code: in class - Bar Chart
+        // Set up the SVG container
+        const svgWidth = 900;
+        const svgHeight = 900;
+        const margin = { top: 60, right: 160, bottom: 60, left: 180 };
+        
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart-container")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight);
+
+
+        const chart = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const tooltip = d3.select("#tooltip");
+
+        const colorMap = { // Source: colorbrewer
+            "Animal":    "#a6cee3",
+            "Plant":     "#1f78b4",
+            "Oils":      "#b2df8a",
+            "Beverages": "#33a02c",
+            "Other":     "#fb9a99"
+        };
+
+        const categories = ["Animal", "Plant", "Oils", "Beverages", "Other"];
+
+        d3.csv("Food_Production_edit.csv").then(function(data) {
+
+            // Convert string values to numbers
+            data.forEach(function(d) {
+                d.ghg = +d.ghg;
+            });
+
+            // Define X and Y scales
+            const scaleY = d3.scaleBand()
+                .domain(data.map(d => d.food))
+                .range([height,0])
+                .padding(0.1);
+
+            const scaleX = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.ghg)])
+                .nice()
+                .range([0, width]);
+
+            // Add X and Y axes
+            chart.append("g")
+                .attr("class", "axis axis-x")
+                .attr("transform", `translate(0, ${height})`)
+                .call(d3.axisBottom(scaleX).ticks(6));
+
+            chart.append("g")
+                .attr("class", "axis axis-y")
+                .call(d3.axisLeft(scaleY));
+
+            // Add bars
+            chart.selectAll(".bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", 0)
+                .attr("y", d => scaleY(d.food))
+                .attr("width",  d => scaleX(d.ghg))
+                .attr("height", scaleY.bandwidth()) // gives the height
+                .attr("fill", d => colorMap[d.category])
+
+                .on("mouseover", (event, d) => {
+                tooltip
+                    .html(`<strong>${d.food}</strong><br>${d.ghg} kg CO2eq/kg<br>Category: ${d.category}`)
+                    .style("opacity", 1);
+            })
+            .on("mousemove", (event) => {
+                tooltip
+                    .style("left", (event.pageX + 12) + "px")
+                    .style("top",  (event.pageY - 28) + "px");
+            })
+            .on("mouseleave", () => {
+                tooltip.style("opacity", 0);
+            });   
+
+            // Bar labels
+            chart.selectAll(".bartext") // Source: https://stackoverflow.com/questions/18057917/adding-label-on-a-d3-bar-chart?rq=3
+               .data(data)
+               .join("text") 
+               .attr("class", "bar-label")
+               .attr("x", d => scaleX(d.ghg) + 4)
+               .attr("y", d => scaleY(d.food) + scaleY.bandwidth() / 2 + 4)
+               .attr("text-anchor", "start")
+               .text(d => d.ghg);
+
+            // Add title, http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html
+            svg.append("text")
+                .attr("x", svgWidth / 2)
+                .attr("y", 30) 
+                .attr("text-anchor", "middle") 
+                .text("Greenhouse Gas Emissions per Kilogram of Food");
+
+            // X-axis label
+            //Source: https://stackoverflow.com/questions/11189284/d3-axis-labeling
+            svg.append("text")
+                .attr("class", "x label")
+                .attr("text-anchor", "middle")
+                .attr("x", margin.left + width / 2)
+                .attr("y", svgHeight - 10)
+                .text("kg CO2eq per kg of food");
+
+            // Legend
+            const legendSvg = d3.select("#chart-container")
+                   .append("svg")
+                   .attr("width", 120)            
+                   .attr("height", 180);
+
+            legendSvg.append("g")
+                   .attr("class", "legendOrdinal")
+                   .attr("transform", `translate(10,20)`);
+
+            const colorScale = d3.scaleOrdinal()
+            .domain(categories)
+            .range(categories.map(c => colorMap[c]));
+
+            var legendOrdinal = d3.legendColor()
+                    .shapeWidth(30)
+                    .orient("vertical")
+                    .scale(colorScale) 
+                    .title("Category");
+
+            legendSvg.select(".legendOrdinal")
+                  .call(legendOrdinal);
+        });
+    </script>
+</body>
+</html>

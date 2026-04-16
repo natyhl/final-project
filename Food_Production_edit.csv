@@ -1,0 +1,44 @@
+food,ghg,category
+Nuts,0.2,Plant
+Potatoes,0.3,Plant
+Onions & Leeks,0.3,Plant
+Root Vegetables,0.3,Plant
+Citrus Fruit,0.3,Plant
+Apples,0.3,Plant
+Brassicas,0.4,Plant
+Other Vegetables,0.5,Plant
+Other Fruit,0.7,Plant
+Bananas,0.7999999999999999,Plant
+Peas,0.7999999999999999,Plant
+Cassava,0.9,Plant
+Soymilk,1.0,Beverages
+Maize (Meal),1.1,Plant
+Barley (Beer),1.1,Beverages
+Berries & Grapes,1.1,Plant
+Beet Sugar,1.4,Plant
+Tomatoes,1.4,Plant
+Wine,1.4,Beverages
+Wheat & Rye (Bread),1.4000000000000004,Plant
+Other Pulses,1.6,Plant
+Oatmeal,1.6,Plant
+Groundnuts,2.4,Plant
+Cane Sugar,2.6,Plant
+Milk,2.8000000000000003,Animal
+Tofu,3.0,Plant
+Sunflower Oil,3.5000000000000004,Oils
+Rapeseed Oil,3.7,Oils
+Rice,4.0,Plant
+Eggs,4.5,Animal
+Fish (farmed),5.1,Animal
+Soybean Oil,5.999999999999999,Oils
+Olive Oil,6.0,Oils
+Poultry Meat,6.1000000000000005,Animal
+Pig Meat,7.2,Animal
+Palm Oil,7.6,Oils
+Shrimps (farmed),11.8,Animal
+Coffee,16.500000000000004,Beverages
+Dark Chocolate,18.7,Other
+Beef (dairy herd),21.1,Animal
+Cheese,21.2,Animal
+Lamb & Mutton,24.5,Animal
+Beef (beef herd),59.6,Animal
