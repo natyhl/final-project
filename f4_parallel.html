@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F4 — Parallel Coordinates</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <style>
+        body { font-family: sans-serif; }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart-container"></div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // F4 — Parallel Coordinates, Source: https://observablehq.com/@d3/parallel-coordinates
+
+        const tooltip = d3.select("#tooltip");
+
+        d3.csv("water_pollution_disease.csv").then(function(data) {
+
+            data.forEach(function(d) {
+                d.contaminant = +d["Contaminant Level (ppm)"];
+                d.bacteria    = +d["Bacteria Count (CFU/mL)"];
+                d.clean_water = +d["Access to Clean Water (% of Population)"];
+                d.diarrhea    = +d["Diarrheal Cases per 100,000 people"];
+                d.name        = d["Country"];
+            });
+
+            const keys = ["contaminant","bacteria","clean_water","diarrhea"];
+            const col1  = "contaminant";
+
+            const width = 1200;
+            const height = keys.length * 200;
+            const marginTop = 20;
+            const marginRight = 10;
+            const marginBottom = 20;
+            const marginLeft = 10;
+
+            const x = new Map(Array.from(keys, key => [key, d3.scaleLinear(d3.extent(data, d => d[key]), [marginLeft, width - marginRight])]));
+            const y = d3.scalePoint(keys, [marginTop, height - marginBottom]);
+            const color = d3.scaleSequential(x.get(col1).domain(), t => d3.interpolateBrBG(1 - t));
+
+            const svg = d3.select("#chart-container")
+                .append("svg")
+                .attr("viewBox", [0, 0, width, height])
+                .attr("width", width)
+                .attr("height", height)
+                .attr("style", "max-width: 100%; height: auto;");
+
+            const line = d3.line()
+                .defined(([, value]) => value != null)
+                .x(([key, value]) => x.get(key)(value))
+                .y(([key]) => y(key));
+
+            const path = svg.append("g")
+                .attr("fill", "none")
+                .attr("stroke-width", 1.5)
+                .attr("stroke-opacity", 0.2)
+                .selectAll("path")
+                .data(data.slice().sort((a, b) => d3.ascending(a[col1], b[col1])))
+                .join("path")
+                .attr("stroke", d => color(d[col1]))
+                .attr("d", d => line(d3.cross(keys, [d], (key, d) => [key, d[key]])))
+                .call(path => path.append("title")
+                    .text(d => d.name));
+
+            const axes = svg.append("g")
+                .selectAll("g")
+                .data(keys)
+                .join("g")
+                .attr("transform", d => `translate(0,${y(d)})`)
+                .each(function(d) { d3.select(this).call(d3.axisBottom(x.get(d))); })
+                .call(g => g.append("text")
+                    .attr("x", marginLeft)
+                    .attr("y", -6)
+                    .attr("text-anchor", "start")
+                    .attr("fill", "currentColor")
+                    .text(d => d))
+                .call(g => g.selectAll("text")
+                    .clone(true).lower()
+                    .attr("fill", "none")
+                    .attr("stroke-width", 5)
+                    .attr("stroke-linejoin", "round")
+                    .attr("stroke", "white"));
+
+            const deselectedColor = "#ddd";
+            const brushHeight = 50;
+            const brush = d3.brushX()
+                .extent([
+                    [marginLeft, -(brushHeight / 2)],
+                    [width - marginRight, brushHeight / 2]
+                ])
+                .on("start brush end", brushed);
+
+            axes.call(brush);
+
+            const selections = new Map();
+            function brushed({selection}, key) {
+                if (selection === null) selections.delete(key);
+                else selections.set(key, selection.map(x.get(key).invert));
+                const selected = [];
+                path.each(function(d) {
+                    const active = Array.from(selections).every(([key, [min, max]]) => d[key] >= min && d[key] <= max);
+                    d3.select(this).style("stroke", active ? color(d[col1]) : deselectedColor);
+                    if (active) {
+                        d3.select(this).raise();
+                        selected.push(d);
+                    }
+                });
+                svg.property("value", selected).dispatch("input");
+            }
+
+            // Color legend
+            const legendSvg = d3.select("#chart-container")
+                .append("svg")
+                .attr("width", 300)
+                .attr("height", 80);
+
+            legendSvg.append("g")
+                .attr("class", "legendColor")
+                .attr("transform", "translate(10, 20)");
+
+            var colorLegend = d3.legendColor()
+                .shapeWidth(30)
+                .orient("horizontal")
+                .scale(color)                          
+                .title("Contaminant Level (ppm)")
+                .cells(5);
+
+            legendSvg.select(".legendColor")
+                .call(colorLegend);
+        });
+    </script>
+</body>
+</html>
