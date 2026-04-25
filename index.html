@@ -20,7 +20,7 @@
       color: #2c4a3e;
       max-width: 100%;
       overflow-x: hidden;
-      background-color: #ffffff:
+      background-color: #ffffff;
     }
 
     header {
@@ -86,7 +86,7 @@
     }
     
     .step {
-      margin: 0 auto 80vh auto;
+      margin: 0 auto 150vh auto;
       padding: 1rem;
       border-left: 2px solid #a8c5a0;
       background-color: white;
@@ -140,16 +140,17 @@
       left: 0;
       width: 100%;
       margin: 0;
-      top: 20%;
-      height: 60vh;
+      top: 0;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
+    } 
 
     .sticky-figure iframe {
       width: 95%;
-      height: 88vh;
+      height: 100vh;
+      overflow-y: auto; /*https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-y8*/
       border: none;
       border-radius: 5px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -269,8 +270,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.2.0/scrollama.min.js"></script>
   <script>
 
-    //var iframe = d3.select('#chart-iframe');
-    var iframe = document.getElementById('chart-iframe');
+    var iframe = document.getElementById('chart-iframe'); // Corrected from Claude, because charts were not changing
 
     // Initialize scrollama
     const scroller = scrollama();
