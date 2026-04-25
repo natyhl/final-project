@@ -130,7 +130,7 @@
             // Add title, https://d3-graph-gallery.com/graph/line_smallmultiple.html
             svg.append("text")
                 .attr("text-anchor", "start")
-                .attr("y", -5)
+                .attr("y", -(margin.top - 15))
                 .attr("x", 0)
                 .text(function(d){ return(d.key)})
                 .style("fill", function(d){ return "#2c4a3e" })
