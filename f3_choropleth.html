@@ -86,6 +86,37 @@
             // Source: https://observablehq.com/@d3/world-choropleth/2
             // Index the values and create the color scale.
             const valuemap = new Map(data.map(d => [d.country, d.co2]));
+
+            // Some names need to be matched
+            const nameMap = {
+                "United States of America": "United States",
+                "Bosnia and Herz.": "Bosnia and Herzegovina",
+                "Central African Rep.": "Central African Republic",
+                "Côte d\'Ivoire": "Cote d\'Ivoire",
+                "Dem. Rep. Congo": "Democratic Republic of Congo",
+                "Eq. Guinea": "Equatorial Guinea",
+                "Faeroe Is.": "Faeroe Islands",
+                "Fr. Polynesia": "French Polynesia",
+                "Macedonia": "North Macedonia",
+                "Marshall Is.": "Marshall Islands",
+                "S. Sudan": "South Sudan",
+                "Solomon Is.": "Solomon Islands",
+                "St. Kitts and Nevis": "Saint Kitts and Nevis",
+                "St. Pierre and Miquelon": "Saint Pierre and Miquelon",
+                "São Tomé and Principe": "Sao Tome and Principe",
+                "Turks and Caicos Is.": "Turks and Caicos Islands",
+                "Wallis and Futuna Is.": "Wallis and Futuna",
+                "Cook Is.": "Cook Islands",
+                "Cabo Verde": "Cape Verde",
+                "Antigua and Barb.": "Antigua and Barbuda",
+                "eSwatini": "Eswatini",
+                "Timor-Leste": "Timor"
+            };
+
+            function getValue(name) {
+                return valuemap.get(name) || valuemap.get(nameMap[name]);
+            }
+
             const scaleColor = d3.scaleSequentialLog(d3.interpolateYlGnBu)
                 .domain([1, d3.max(data, d => d.co2)])
                 .unknown("#ccc"); // source: https://d3js.org/d3-scale/linear
@@ -110,12 +141,12 @@
             .selectAll("path")
             .data(countries.features)
             .join("path")
-            .attr("fill", d => scaleColor(valuemap.get(d.properties.name)))
+            .attr("fill", d => scaleColor(getValue(d.properties.name)))
             .attr("d", path)
             
             .on("mouseover", (event, d) => {
                 tooltip
-                    .html(`${d.properties.name}: ${valuemap.get(d.properties.name) ? d3.format(",.0f")(valuemap.get(d.properties.name)) + " tons" : "N/A"}`)
+                    .html(`${d.properties.name}: ${getValue(d.properties.name) ? d3.format(",.0f")(getValue(d.properties.name)) + " tons" : "N/A"}`)
                     .style("opacity", 1);
                 })
             .on("mousemove", (event) => {
@@ -127,7 +158,7 @@
                     tooltip.style("opacity", 0);
                 })
             .append("title")
-            .text(d => `${d.properties.name}\n${valuemap.get(d.properties.name)}`)
+            .text(d => `${d.properties.name}\n${getValue(d.properties.name)}`)
 
             // Add a white mesh. Source: https://observablehq.com/@d3/world-choropleth/2
             svg.append("path")
