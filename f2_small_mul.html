@@ -28,7 +28,7 @@
         }
 
         .axis text {
-            font-size: 8px;
+            font-size: 10px;
         }
         .title {
             font-size: 18px;
@@ -40,14 +40,14 @@
 <body>
     <div id="chart-container"></div>
     <!-- Create a div where the graph will take place, Source: https://d3-graph-gallery.com/graph/line_smallmultiple.html-->
-    <p style="font-size:16px; font-weight:400; text-align:center; color:#2c4a3e;">GHG Emissions by Supply-Chain Stage — Top 15 Foods (kg CO₂eq/kg)</p>
+    <p style="font-size:18px; font-weight:400; text-align:center; color:#2c4a3e;">GHG Emissions by Supply-Chain Stage — Top 15 Foods (kg CO₂eq/kg)</p>
     <div id="my_dataviz"></div> 
 
     <script>
         // Set up the SVG container
         var margin = {top: 60, right: 0, bottom: 30, left: 50},
-        width = 210 - margin.left - margin.right,
-        height = 210 - margin.top - margin.bottom;
+        width = 280 - margin.left - margin.right,
+        height = 260 - margin.top - margin.bottom;
 
         const stages = ["Land use change","Animal Feed","Farm","Processing","Transport","Packging","Retail"];
 
@@ -135,26 +135,38 @@
                 .attr("text-anchor", "start")
                 .attr("y", -(margin.top / 2))
                 .attr("x", 0)
-                .style("font-size", "9px")
-                .text(function(d){ return(d.key)})
-                .style("fill", function(d){ return "#2c4a3e" })
+                .style("font-size", "11px")
+                .text(function(d){ return d.key === "Beef (beef herd)" ? "Beef" : d.key })
+                .style("fill", function(d){ return d.key == "Beef (beef herd)" ? "#c0392b" : "#2c4a3e" })
 
+            // Rectangle
+            svg.filter(function(d) { return d.key == "Beef (beef herd)"; })
+                .append("rect")
+                .attr("x", -4)
+                .attr("y", -4) 
+                .attr("width", width + 8) 
+                .attr("height", height + 8)
+                .attr("fill", "none")
+                .attr("stroke", "#c0392b")
+                .attr("stroke-width", 2)
+                .attr("rx", 3);
+ 
             // X-axis label
             //Source: https://stackoverflow.com/questions/11189284/d3-axis-labeling
             svg.append("text")
                 .attr("text-anchor", "middle")
                 .attr("x", width / 2)
                 .attr("y", height + margin.bottom - 2)
-                .attr("font-size", "8px")
+                .attr("font-size", "10px")
                 .text("Stage");
 
             // Y-axis label
             svg.append("text")
                 .attr("text-anchor", "middle")
                 .attr("x", -height / 2)
-                .attr("y", -50)
+                .attr("y", -40)
                 .attr("dy", ".75em")
-                .attr("font-size", "8px")
+                .attr("font-size", "10px")
                 .attr("transform", "rotate(-90)")
                 .text("kg CO2eq / kg");
 
