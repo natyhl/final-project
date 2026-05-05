@@ -7,7 +7,7 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
     <style>
-        body { font-family: sans-serif; }
+        body { font-family: 'Source Sans 3', sans-serif; font-size: 18px; color: #2c4a3e; }
         .tooltip {
             position: absolute;
             background: rgba(0, 0, 0, 0.75);
@@ -33,15 +33,15 @@
         d3.csv("water_pollution_disease.csv").then(function(data) {
 
             data.forEach(function(d) {
-                d.contaminant = +d["Contaminant Level (ppm)"];
-                d.bacteria    = +d["Bacteria Count (CFU/mL)"];
-                d.clean_water = +d["Access to Clean Water (% of Population)"];
-                d.diarrhea    = +d["Diarrheal Cases per 100,000 people"];
-                d.name        = d["Country"];
+                d.gdp         = +d["GDP per Capita (USD)"];
+                d.sanitation  = +d["Sanitation Coverage (% of Population)"];
+                d.clean_water = +d["Access to Clean Water (% of Population)"];         
+                d.infant_mort = +d["Infant Mortality Rate (per 1,000 live births)"];
+                d.name = d["Country"];
             });
 
-            const keys = ["contaminant","bacteria","clean_water","diarrhea"];
-            const col1  = "contaminant";
+            const keys = ["gdp","sanitation","clean_water","infant_mort"];
+            const col1  = "gdp";
 
             const width = 1200;
             const height = keys.length * 200;
@@ -52,7 +52,8 @@
 
             const x = new Map(Array.from(keys, key => [key, d3.scaleLinear(d3.extent(data, d => d[key]), [marginLeft, width - marginRight])]));
             const y = d3.scalePoint(keys, [marginTop, height - marginBottom]);
-            const color = d3.scaleSequential(x.get(col1).domain(), t => d3.interpolateBrBG(1 - t));
+            const color = d3.scaleSequential(d3.interpolateBrBG)
+                .domain(d3.extent(data, d => d[col1]));
 
             const svg = d3.select("#chart-container")
                 .append("svg")
@@ -66,7 +67,7 @@
             .attr("x", width / 2)
             .attr("y", 30)
             .attr("text-anchor", "middle")
-            .text("Water Contamination, Access & Disease");            
+            .text("GDP, Sanitation, Clean Water & Infant Mortality");            
 
             const line = d3.line()
                 .defined(([, value]) => value != null)
@@ -96,6 +97,7 @@
                     .attr("y", -6)
                     .attr("text-anchor", "start")
                     .attr("fill", "currentColor")
+                    .style("font-size", "16px")
                     .text(d => d))
                 .call(g => g.selectAll("text")
                     .clone(true).lower()
@@ -134,7 +136,7 @@
             // Color legend
             const legendSvg = d3.select("#chart-container")
                 .append("svg")
-                .attr("width", 300)
+                .attr("width", 800)
                 .attr("height", 80);
 
             legendSvg.append("g")
@@ -142,11 +144,12 @@
                 .attr("transform", "translate(10, 20)");
 
             var colorLegend = d3.legendColor()
-                .shapeWidth(30)
+                .shapeWidth(50)
                 .orient("horizontal")
-                .scale(color)                          
-                .title("Contaminant Level (ppm)")
-                .cells(5);
+                .scale(color)
+                .title("GDP per Capita (USD)")
+                .cells(10)
+                .labelFormat(d3.format("$.1s"));
 
             legendSvg.select(".legendColor")
                 .call(colorLegend);
