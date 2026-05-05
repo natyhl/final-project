@@ -19,9 +19,9 @@
         }
         .axis-x .tick line,
         .axis-y .tick line { stroke: #ccc; }
-        .axis text { font-size: 12px; }
+        .axis text { font-size: 16px; }
         .title { font-size: 18px; font-weight: bold; }
-        .bar-label { font-size: 10px; }
+        .bar-label { font-size: 15px; }
         .tooltip {
             position: absolute;
             background: rgba(0, 0, 0, 0.75);
@@ -44,8 +44,8 @@
         // F1 — Sorted Horizontal Bar Chart: GHG per kg of food
         // Starter code: in class - Bar Chart
         // Set up the SVG container
-        const svgWidth = 900;
-        const svgHeight = 900;
+        const svgWidth = 1100;
+        const svgHeight = 1000;
         const margin = { top: 60, right: 160, bottom: 60, left: 180 };
         
         const width = svgWidth - margin.left - margin.right;
@@ -134,13 +134,14 @@
                .attr("x", d => scaleX(d.ghg) + 4)
                .attr("y", d => scaleY(d.food) + scaleY.bandwidth() / 2 + 4)
                .attr("text-anchor", "start")
-               .text(d => d.ghg);
+               .text(d => d3.format(".1f")(d.ghg));
 
             // Add title, http://www.d3noob.org/2013/01/adding-title-to-your-d3js-graph.html
             svg.append("text")
                 .attr("x", svgWidth / 2)
                 .attr("y", 30) 
                 .attr("text-anchor", "middle") 
+                .style("font-size", "20px")
                 .text("Greenhouse Gas Emissions per Kilogram of Food");
 
             // X-axis label
@@ -150,6 +151,7 @@
                 .attr("text-anchor", "middle")
                 .attr("x", margin.left + width / 2)
                 .attr("y", svgHeight - 10)
+                .style("font-size", "15px")
                 .text("kg CO2eq per kg of food");
 
             // Legend
