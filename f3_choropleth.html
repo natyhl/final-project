@@ -59,7 +59,7 @@
         // Aiming for grade A
         // Set up the SVG container
         const svgWidth = 1200;
-        const svgHeight = 600;
+        const svgHeight = 650;
         const margin = { top: 60, right: 200, bottom: 80, left: 100 };
         
         const width = svgWidth - margin.left - margin.right;
@@ -73,6 +73,7 @@
             .attr("style", "max-width: 100%; height: auto;");
 
         const tooltip = d3.select("#tooltip");
+        const format = (d) => d3.format(".2s")(d).replace("G", "B");
 
         d3.csv("CO2emission_by_countries_2000.csv").then(function(data) { // data source (edited): https://www.kaggle.com/datasets/moazzimalibhatti/co2-emission-by-countries-year-wise-17502022
 
@@ -146,7 +147,7 @@
             
             .on("mouseover", (event, d) => {
                 tooltip
-                    .html(`${d.properties.name}: ${getValue(d.properties.name) ? d3.format(",.0f")(getValue(d.properties.name)) + " tons" : "N/A"}`)
+                    .html(`${d.properties.name}: ${getValue(d.properties.name) ? format(getValue(d.properties.name)) + " tons" : "N/A"}`)
                     .style("opacity", 1);
                 })
             .on("mousemove", (event) => {
@@ -158,7 +159,7 @@
                     tooltip.style("opacity", 0);
                 })
             .append("title")
-            .text(d => `${d.properties.name}\n${getValue(d.properties.name)}`)
+            .text(d => `${d.properties.name}\n${getValue(d.properties.name) ? format(getValue(d.properties.name)) + " tons" : "N/A"}`)
 
             // Add a white mesh. Source: https://observablehq.com/@d3/world-choropleth/2
             svg.append("path")
