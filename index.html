@@ -79,10 +79,10 @@
     }
     
     article {
-      position: relative;
-      padding: 0;
-      max-width: 20rem;
-      margin: 0 auto;
+      position: absolute;
+      left: 1rem;        
+      top: 0;             
+      width: 22rem;       
       pointer-events: none; /*https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/pointer-events8*/
     }
     
@@ -107,6 +107,7 @@
       margin: 0;
       padding: 0.5rem;
       text-align: left;
+      font-size: 0.95rem;
     }
 
     .step-label {
@@ -150,7 +151,7 @@
     } 
 
     .sticky-figure iframe {
-      width: 95%;
+      width: 75%;
       height: 100vh;
       overflow-y: auto; /*https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-y8*/
       border: none;
@@ -166,6 +167,7 @@
     }
 
     h2, h3 { font-family: 'Playfair Display', serif; color: #2c4a3e; }
+    .step h3 { font-size: 1.1rem; }
     
     svg {
       background: white;
@@ -237,13 +239,12 @@
       </div>
  
       <div class="step" data-step="4" data-chart="f4_parallel.html">
-        <span class="step-label">Figure 4: Water & Disease</span>
-        <h3>Agricultural runoff connects food to disease</h3>
-        <p>Farming chemicals flow into rivers and drinking water. This chart connects contamination levels, bacteria counts, clean water access, and diarrheal disease across 10 countries.</p>
-        <p>Average clean water access across the 10 countries is only 64.6%. Average diarrheal disease burden is 250 cases per 100,000 people. Drag on any axis to filter.</p>
-        <span class="stat">Avg clean water access: 64.6%</span>
-        <span class="stat">Avg diarrhea: 250 cases / 100k</span>
-      </div>
+        <span class="step-label">Figure 4: Development & Health</span>
+        <h3>Wealthier countries have cleaner water and healthier children</h3>
+        <p>Wealthier countries invest more in sanitation infrastructure, which drives clean water access and reduces child mortality. This chart connects GDP per capita, sanitation coverage, clean water access, and infant mortality across 10 countries.</p>
+        <p>Drag on any axis to filter and trace the chain from economic development to health outcomes.</p>
+        <span class="stat">GDP drives sanitation → clean water → survival</span>
+    </div>
     </article>
   </section>
 

@@ -114,7 +114,7 @@
 
                 .on("mouseover", (event, d) => {
                 tooltip
-                    .html(`<strong>${d.food}</strong><br>${d.ghg} kg CO2eq/kg<br>Category: ${d.category}`)
+                    .html(`<strong>${d.food}</strong><br>${d3.format(".1f")(d.ghg)} kg CO₂eq/kg<br>Category: ${d.category}`)
                     .style("opacity", 1);
             })
             .on("mousemove", (event) => {
