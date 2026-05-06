@@ -54,9 +54,9 @@
         const svg = d3.select("#chart-container")
             .append("svg")
             .attr("width", svgWidth)
-            .attr("height", svgHeight);
+            .attr("height", svgHeight)
             .attr("viewBox", [0, 0, svgWidth, svgHeight])
-            .attr("style", "max-width: 100%; height: auto;") //Fit index.html (AI resolved the proble)
+            .attr("style", "max-width:100%; height:auto; display:block;") //Fit index.html (AI resolved the proble)
 
 
         const chart = svg.append("g")
