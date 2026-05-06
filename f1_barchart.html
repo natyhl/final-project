@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
     <style>
         /* CSS styles for the chart */
-        body { font-family: 'Source Sans 3', sans-serif; background: #fff; color: #2c4a3e; }
+        body { font-family: 'Source Sans 3', sans-serif; background: #fff; color: #2c4a3e; margin: 0; overflow: hidden; }
         .bar { opacity: 0.85; }
         .bar:hover { opacity: 1; stroke: #333; stroke-width: 1px; }
         .axis-x path,
@@ -55,6 +55,8 @@
             .append("svg")
             .attr("width", svgWidth)
             .attr("height", svgHeight);
+            .attr("viewBox", [0, 0, svgWidth, svgHeight])
+            .attr("style", "max-width: 100%; height: auto;") //Fit index.html (AI resolved the proble)
 
 
         const chart = svg.append("g")
