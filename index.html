@@ -79,10 +79,10 @@
     }
     
     article {
-      position: relative;
-      padding: 0;
-      max-width: 24rem;
-      margin: 0 auto;
+      position: absolute;
+      left: 1rem;        
+      top: 0;             
+      width: 22rem;       
       pointer-events: none; /*https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/pointer-events8*/
     }
     
@@ -153,7 +153,7 @@
     .sticky-figure iframe {
       width: 75%;
       height: 100vh;
-      overflow-y: hidden; /*https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-y8*/
+      overflow-y: auto; /*https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-y8*/
       border: none;
       border-radius: 5px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -216,7 +216,9 @@
         <span class="step-label">Figure 1: Food Emissions</span>
         <h3>Beef emits 20× more per kilogram than peas</h3>
         <p>This chart ranks all 43 foods by greenhouse gas emissions per kg. Animal products dominate; but the surprises are in the middle.</p>
-        <p>Dark chocolate (18.7 kg) and coffee (16.5 kg) both beat pork (7.2 kg). Not all plant foods are low-carbon! Average animal food: 16.4 kg CO₂eq/kg vs. plant average of only 2.8 kg.</p> <!-- Used AI for averaging the data-->
+        <p>Dark chocolate (18.7 kg) and coffee (16.5 kg) both beat pork (7.2 kg). Not all plant foods are low-carbon! Average animal food: 16.4 kg CO₂eq/kg vs. plant average of only 2.8 kg.</p>
+        <span class="stat">Beef: 59.6 kg CO₂eq/kg</span>
+        <span class="stat">Nuts: 0.2 kg CO₂eq/kg</span>
       </div>
  
       <div class="step" data-step="2" data-chart="f2_small_mul.html">
@@ -224,6 +226,7 @@
         <h3>The farm causes 58% of emissions (not the packaging)</h3>
         <p>Each panel shows one food broken into 7 supply-chain stages. For beef, farming alone drives 39.4 of its 59.6 kg total. Land use change adds another 16.3 kg.</p>
         <p>Transport accounts for just 3.3% of food emissions. Buying local matters far less than what you actually buy.</p>
+        <span class="stat">Farm: 58% · Transport: 3.3%</span>
       </div>
  
       <div class="step" data-step="3" data-chart="f3_choropleth.html">
@@ -231,13 +234,16 @@
         <h3>Food is one part of a larger crisis</h3>
         <p>Food systems account for ~26% of all global greenhouse gas emissions. This map shows who drives the rest.</p>
         <p>In 2000, the USA was the world's largest single emitter at 304 billion tons. Russia (83B) and Germany (76B) ranked 2nd and 3rd — China (75B) was 4th at that time</p>
+        <span class="stat">USA: 304B tons (2000)</span>
+        <span class="stat">China: 75B tons (2000)</span>
       </div>
  
       <div class="step" data-step="4" data-chart="f4_parallel.html">
         <span class="step-label">Figure 4: Development & Health</span>
-        <h3>How do GDP, sanitation, and water access relate to infant mortality?</h3>
-        <p>This chart explores four development indicators across countries in the dataset: GDP per capita, sanitation coverage, clean water access, and infant mortality. Average clean water access is 64.6%.</p>
-        <p>Drag on any axis to filter countries by a range of values and trace how the indicators co-vary.</p>
+        <h3>Wealthier countries have cleaner water and healthier children</h3>
+        <p>Wealthier countries invest more in sanitation infrastructure, which drives clean water access and reduces child mortality. This chart connects GDP per capita, sanitation coverage, clean water access, and infant mortality across 10 countries.</p>
+        <p>Drag on any axis to filter and trace the chain from economic development to health outcomes.</p>
+        <span class="stat">GDP drives sanitation → clean water → survival</span>
     </div>
     </article>
   </section>

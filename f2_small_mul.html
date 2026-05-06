@@ -34,8 +34,7 @@
             font-size: 18px;
             font-weight: bold;
         }
-        body { overflow: hidden; } /*fix from AI to make the frame fit the index.html*/
-        #my_dataviz { display: flex; flex-wrap: wrap; align-items: flex-start; }
+        body { overflow: visible; } /*fix from AI to make the title actually visible on the index.html*/
     </style>
 </head>
 <body>
@@ -103,8 +102,6 @@
             .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
-            .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`) // Sol from AI: added viewBox so each panel can scale
-            .style("max-width", "100%")
             .style("overflow", "visible") // Fix title visibility issue, Claude
             .append("g")
             .attr("transform",
