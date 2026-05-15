@@ -46,7 +46,7 @@
         // Set up the SVG container
         const svgWidth = 1100;
         const svgHeight = 1000;
-        const margin = { top: 60, right: 160, bottom: 60, left: 180 };
+        const margin = { top: 60, right: 200, bottom: 60, left: 180 };
         
         const width = svgWidth - margin.left - margin.right;
         const height = svgHeight - margin.top - margin.bottom;
@@ -155,14 +155,9 @@
                 .text("kg CO2eq per kg of food");
 
             // Legend
-            const legendSvg = d3.select("#chart-container")
-                   .append("svg")
-                   .attr("width", 120)            
-                   .attr("height", 180);
-
-            legendSvg.append("g")
-                   .attr("class", "legendOrdinal")
-                   .attr("transform", `translate(10,20)`);
+            svg.append("g")
+                .attr("class", "legendOrdinal")
+                .attr("transform", `translate(${svgWidth - margin.right + 50}, 40)`);
 
             const colorScale = d3.scaleOrdinal()
             .domain(categories)
@@ -174,7 +169,7 @@
                     .scale(colorScale) 
                     .title("Category");
 
-            legendSvg.select(".legendOrdinal")
+            svg.select(".legendOrdinal")
                   .call(legendOrdinal);
         });
     </script>
