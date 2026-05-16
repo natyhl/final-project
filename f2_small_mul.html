@@ -41,6 +41,9 @@
     <div id="chart-container"></div>
     <!-- Create a div where the graph will take place, Source: https://d3-graph-gallery.com/graph/line_smallmultiple.html-->
     <p style="font-size:18px; font-weight:400; text-align:center; color:#2c4a3e;">GHG Emissions by Supply-Chain Stage — Top 15 Foods (kg CO₂eq/kg)</p>
+    <div id="legend-container"
+         style="display:flex; justify-content:center; margin-bottom:8px;">
+    </div> <!--Help from Claude to put color legend up-->
     <div id="my_dataviz"></div> 
 
     <script>
@@ -171,18 +174,19 @@
                 .text("kg CO2eq / kg");
 
             // Add legend, source: https://d3-legend.susielu.com/
-            const legendSvg = d3.select("#my_dataviz")
+            const legendSvg = d3.select("#legend-container")
                    .append("svg")
-                   .attr("width", 160)            
-                   .attr("height", 180);
+                   .attr("width", 720)            
+                   .attr("height", 65);
 
             legendSvg.append("g")
                    .attr("class", "legendOrdinal")
-                   .attr("transform", `translate(10,20)`);
+                   .attr("transform", `translate(10,11)`);
 
                 var legendOrdinal = d3.legendColor()
-                    .shapeWidth(30)
-                    .orient("vertical")
+                    .shapeWidth(15)
+                    .shapePadding(90)
+                    .orient("horizontal")
                     .scale(colorScale) 
                     .title("Stage");
 
